@@ -3,6 +3,6 @@ numpy
 pandas
 matplotlib
 scikit-learn
-tensorflow
-shap
 joblib
+shap
+keras
