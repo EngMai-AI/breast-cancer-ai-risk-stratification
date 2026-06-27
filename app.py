@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 import shap
+git add .
+git commit -m "Fix Streamlit deployment: remove TensorFlow dependency"
+git push
 
 # ===============================
 # PAGE CONFIG
