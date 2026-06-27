@@ -1,8 +1,7 @@
 streamlit
 numpy
 pandas
-matplotlib
 scikit-learn
-joblib
+matplotlib
 shap
-keras
+joblib
