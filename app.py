@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
-import shap
 
 # ===============================
 # PAGE CONFIG
@@ -21,11 +20,11 @@ st.markdown("""
 """)
 
 # ===============================
-# LOAD MODELS
+# LOAD MODEL
 # ===============================
 @st.cache_resource
 def load_assets():
-    model = joblib.load("model.pkl")   # sklearn model
+    model = joblib.load("model.pkl")
     scaler = joblib.load("scaler.pkl")
     return model, scaler
 
@@ -58,7 +57,11 @@ mode = st.sidebar.selectbox(
     ["Screening (0.3)", "Balanced (0.5)", "Strict (0.7)"]
 )
 
-threshold = {"Screening (0.3)":0.3,"Balanced (0.5)":0.5,"Strict (0.7)":0.7}[mode]
+threshold = {
+    "Screening (0.3)": 0.3,
+    "Balanced (0.5)": 0.5,
+    "Strict (0.7)": 0.7
+}[mode]
 
 # ===============================
 # PREDICTION
@@ -103,12 +106,21 @@ if st.sidebar.button("🔍 Run Analysis"):
     st.dataframe(pd.DataFrame([input_data], columns=features))
 
     # ===============================
-    # SHAP (Optional but safe with sklearn)
+    # SAFE FEATURE IMPORTANCE (NO SHAP)
     # ===============================
-    st.subheader("🧠 Explainability (SHAP)")
+    st.subheader("📊 Feature Contribution (Approx)")
 
-    explainer = shap.Explainer(model, X_scaled)
-    shap_values = explainer(X_scaled)
+    try:
+        importances = model.feature_importances_
+        idx = np.argsort(importances)[::-1][:10]
 
-    shap.plots.bar(shap_values[0], max_display=10, show=False)
-    st.pyplot(plt.gcf())
+        fig, ax = plt.subplots()
+        ax.barh(range(10), importances[idx][::-1])
+        ax.set_yticks(range(10))
+        ax.set_yticklabels(features[idx][::-1])
+        ax.set_title("Top 10 Features")
+
+        st.pyplot(fig)
+
+    except:
+        st.info("Model does not support feature importance.")
